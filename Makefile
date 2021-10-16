@@ -18,5 +18,20 @@ compile-go:
 
 compile-python:
 	docker run --rm -v $(PWD):/pygo -it pygo-python-pb:latest \
-	python -m grpc_tools.protoc -I hello_client/proto --python_out=hello_client/proto/ \
-	--grpc_python_out=hello_client/proto/ hello_client/proto/hello.proto
+	python -m grpc_tools.protoc -I hello_client/proto --python_out=hello_client/ \
+	--grpc_python_out=hello_client/ hello_client/proto/hello.proto
+
+build-hello-server:
+	docker build -t pygo-go-server:latest ./hello_server
+
+go-run-server:
+	docker run --rm -it -p 50051:50051 --name pygo_go_server pygo-go-server:latest
+
+go-run-server-local:
+	docker run --rm -v $(PWD)/hello_server:/go/src/work -it pygo-go-server:latest go run server.go
+
+build-hello-client:
+	docker build -t pygo-python-client:latest ./hello_client
+
+python-run-app:
+	docker run --rm -it -v $(PWD)/hello_client:/work --net host pygo-python-client:latest python app.py
