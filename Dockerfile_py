@@ -1,0 +1,10 @@
+FROM python:3.10.0-buster
+
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /pygo
+
+RUN pip install --upgrade pip && \
+    pip install grpcio && \
+    pip install grpcio-tools
+COPY ./ /pygo/
